@@ -1,10 +1,11 @@
 package session;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpSessions {
 
-    private static Map<String, HttpSession> sessions;
+    private static Map<String, HttpSession> sessions = new HashMap<>();
 
     public static HttpSession getSession(String id) {
         HttpSession hs = sessions.get(id);
