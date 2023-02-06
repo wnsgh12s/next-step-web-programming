@@ -30,7 +30,7 @@ public class HttpResponse {
         }
     }
 
-    private void response302HeaderAndSetCookie(final DataOutputStream dos, String cookie) {
+    public void response302HeaderAndSetCookie(final DataOutputStream dos, String cookie) {
         try {
             dos.writeBytes("HTTP/1.1 302 Found \r\n");
             dos.writeBytes("Location: /index.html\r\n");
@@ -82,5 +82,9 @@ public class HttpResponse {
                 Paths.get(new File("./webapp").toPath() + "/404.html"));
         response200Header(dos, body.length, httpRequest.getHeaders("Accept"));
         responseBody(dos, body);
+    }
+
+    public void setCookie(String cookie) {
+        response302HeaderAndSetCookie(dos,cookie);
     }
 }

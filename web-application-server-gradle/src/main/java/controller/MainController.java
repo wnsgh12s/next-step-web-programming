@@ -5,6 +5,7 @@ import http.HttpResponse;
 import util.path.Path;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class MainController {
 
@@ -14,6 +15,9 @@ public class MainController {
     public MainController(final HttpRequest httpRequest, final HttpResponse httpResponse) {
         this.httpRequest = httpRequest;
         this.httpResponse = httpResponse;
+        if (httpRequest.getcookies().get("JSESSIONID") == null) {
+            httpResponse.setCookie("JSESSIONID = " + UUID.randomUUID());
+        }
     }
 
     public void runProcess() throws IOException {
