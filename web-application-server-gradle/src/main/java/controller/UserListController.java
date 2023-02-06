@@ -11,7 +11,6 @@ import session.HttpSession;
 import util.HttpRequestUtils;
 import webserver.RequestHandler;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public class UserListController implements Controller {
@@ -24,11 +23,11 @@ public class UserListController implements Controller {
         if (isLoginCookie && isLoinged(httpRequest.getSession())) {
             Collection<User> users = DataBase.findAll();
             log.debug("{}", users.stream().map(User::getName).collect(Collectors.joining("\n")));
-            httpResponse.redirectHome();
+            httpResponse.redirect("/index.html");
             return;
         }
         log.debug("You must log in first..");
-        httpResponse.redirectHome();
+        httpResponse.redirect("/index.html");
     }
 
     private static boolean isLoinged(HttpSession httpSession){
