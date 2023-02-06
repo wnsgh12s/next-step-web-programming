@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import session.HttpSession;
 import util.HttpRequestUtils;
 import webserver.RequestHandler;
 
@@ -19,8 +20,8 @@ public class UserListController implements Controller {
     @Override
     public void use(final HttpRequest httpRequest, final HttpResponse httpResponse) {
         String loginValue = HttpRequestUtils.parseCookies(httpRequest.getHeaders("Cookie")).get("logined");
-        boolean isLogin = Boolean.parseBoolean(loginValue);
-        if (isLogin) {
+        boolean isLoginCookie = Boolean.parseBoolean(loginValue);
+        if (isLoginCookie && isLoinged(httpRequest.getSession())) {
             Collection<User> users = DataBase.findAll();
             log.debug("{}", users.stream().map(User::getName).collect(Collectors.joining("\n")));
             httpResponse.redirectHome();
@@ -28,5 +29,10 @@ public class UserListController implements Controller {
         }
         log.debug("You must log in first..");
         httpResponse.redirectHome();
+    }
+
+    private static boolean isLoinged(HttpSession httpSession){
+        Object user = httpSession.getAttribute("user");
+        return user != null;
     }
 }

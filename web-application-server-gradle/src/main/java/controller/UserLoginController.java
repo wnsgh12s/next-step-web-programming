@@ -4,6 +4,7 @@ import db.DataBase;
 import http.HttpRequest;
 import http.HttpResponse;
 import model.User;
+import session.HttpSession;
 import util.HttpRequestUtils;
 
 import java.io.IOException;
@@ -14,14 +15,15 @@ public class UserLoginController implements Controller {
     public void use(final HttpRequest httpRequest, final HttpResponse httpResponse) throws IOException {
         Map<String, String> queryString = HttpRequestUtils.parseQueryString(httpRequest.parseHttpRequestBody());
         User user = DataBase.findUserById(queryString.get("userId"));
-        judgementLogin(httpResponse, queryString, user);
-    }
-
-    private static void judgementLogin(HttpResponse httpResponse, Map<String, String> queryString, User user) {
-        if (user != null && user.getPassword().equals(queryString.get("password"))) {
+        if (isLogin(queryString, user)) {
             httpResponse.loginSucess();
+            httpRequest.getSession().setAttribute("user",user);
             return;
         }
         httpResponse.loginFailed();
+    }
+
+    private static boolean isLogin(Map<String, String> queryString, User user) {
+        return user != null && user.getPassword().equals(queryString.get("password"));
     }
 }

@@ -2,6 +2,9 @@ package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import session.HttpSession;
+import session.HttpSessions;
+import util.HttpRequestUtils;
 import util.IOUtils;
 import util.RequestLine;
 import webserver.RequestHandler;
@@ -42,6 +45,15 @@ public class HttpRequest {
             }
         }
         return headers;
+    }
+
+    public HttpSession getSession(){
+        return HttpSessions.getSession(getcookies().get("JSESSIONID"));
+    }
+
+    public Map<String, String> getcookies() {
+        String cookies = headers.get("Cookie");
+        return HttpRequestUtils.parseCookies(cookies);
     }
 
 

@@ -20,6 +20,7 @@ public class MainController {
         Path url = Path.from(httpRequest.getUrl());
         Controller controller = url.selectController();
         controller.use(httpRequest, httpResponse);
+        httpRequest.getcookies();
     }
 
 }

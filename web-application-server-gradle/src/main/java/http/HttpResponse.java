@@ -54,7 +54,7 @@ public class HttpResponse {
 
     public void responseStaticFile(final HttpRequest httpRequest) throws IOException {
         byte[] body = Files.readAllBytes(
-                Paths.get(new File("./web-application-server-gradle/webapp").toPath() + httpRequest.getUrl()));
+                Paths.get(new File("./webapp").toPath() + httpRequest.getUrl()));
         response200Header(dos, body.length, httpRequest.getHeaders("Accept"));
         responseBody(dos, body);
     }
@@ -70,7 +70,7 @@ public class HttpResponse {
     }
 
     public void loginSucess() {
-        response302HeaderAndSetCookie(dos, "logined = true;Path=/;");
+        response302HeaderAndSetCookie(dos, "logined = true; Path=/;");
     }
 
     public void loginFailed() {
@@ -79,7 +79,7 @@ public class HttpResponse {
 
     public void response404Header(HttpRequest httpRequest) throws IOException {
         byte[] body = Files.readAllBytes(
-                Paths.get(new File("./web-application-server-gradle/webapp").toPath() + "/404.html"));
+                Paths.get(new File("./webapp").toPath() + "/404.html"));
         response200Header(dos, body.length, httpRequest.getHeaders("Accept"));
         responseBody(dos, body);
     }

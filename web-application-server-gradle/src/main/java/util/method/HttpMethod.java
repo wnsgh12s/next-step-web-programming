@@ -1,6 +1,5 @@
 package util.method;
 
-import exception.HttpIllegalArgumentException;
 import http.parser.GetHttpBodyParser;
 import http.parser.HttpBodyParser;
 import http.parser.PostHttpBodyParser;
@@ -32,7 +31,7 @@ public enum HttpMethod implements Parser {
         return Arrays.stream(values())
                 .filter(httpMethod -> httpMethod.method.equals(method))
                 .findAny()
-                .orElseThrow(() -> new HttpIllegalArgumentException("[ERROR]" + method + "지원하지 않는 매서드"));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR]" + method + "지원하지 않는 매서드"));
     }
 
 
