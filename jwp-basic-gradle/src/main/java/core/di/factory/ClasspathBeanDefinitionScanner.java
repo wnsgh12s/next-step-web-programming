@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 import org.reflections.Reflections;
 
-public class BeanScanner {
+public class ClasspathBeanDefinitionScanner {
     private final Reflections reflection;
 
-    public BeanScanner(Object... basePackage) {
+    public ClasspathBeanDefinitionScanner(Object... basePackage) {
         this.reflection = new Reflections(basePackage);
     }
 

@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import core.annotation.RequestMapping;
 import core.annotation.RequestMethod;
 import core.di.factory.BeanFactory;
-import core.di.factory.BeanScanner;
+import core.di.factory.ClasspathBeanDefinitionScanner;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class AnnoationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         //컨트롤러 클래스 탐색
-        BeanFactory beanFactory = new BeanFactory(new BeanScanner(basePackage).scan());
+        BeanFactory beanFactory = new BeanFactory(new ClasspathBeanDefinitionScanner(basePackage).scan());
         beanFactory.initialize();
         Map<Class<?>, Object> controllers = beanFactory.getControllers();
         Set<Method> methods = getRequestMappingMethods(controllers.keySet());
