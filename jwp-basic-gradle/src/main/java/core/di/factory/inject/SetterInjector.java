@@ -27,6 +27,9 @@ public class SetterInjector extends AbstractInjector {
     Class<?> getBeanClass(Object injectedBean) {
         Method method = (Method) injectedBean;
         Class<?>[] parameters = method.getParameterTypes();
+        if(parameters.length > 1){
+            throw new IllegalArgumentException("의존성 주입을 하는 매서드의 길이는 1을 초과할 수 없습니다.");
+        }
         return parameters[0];
     }
 
