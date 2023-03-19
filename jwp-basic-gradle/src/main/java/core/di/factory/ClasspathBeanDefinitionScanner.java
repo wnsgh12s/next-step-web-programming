@@ -9,18 +9,25 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 public class ClasspathBeanDefinitionScanner {
-    private final Reflections reflection;
+    private final BeanDefinitionRegistry beanDefinitionRegister;
 
-    public ClasspathBeanDefinitionScanner(Object... basePackage) {
-        this.reflection = new Reflections(basePackage);
+    public ClasspathBeanDefinitionScanner(BeanDefinitionRegistry beanDefinitionRegister) {
+        this.beanDefinitionRegister = beanDefinitionRegister;
     }
 
-    public Set<Class<?>> scan() {
-        Class<? extends Annotation>[] classes = new Class[]{Controller.class, Service.class, Repository.class};
+    public Set<Class<?>> getTypesAnnotatedWith(Reflections reflections, Class<? extends Annotation>... annotationClass) {
         Set<Class<?>> beans = new HashSet<>();
-        for (Class<? extends Annotation> annotation : classes) {
-            beans.addAll(reflection.getTypesAnnotatedWith(annotation));
+        for (Class<? extends Annotation> annotation : annotationClass) {
+            beans.addAll(reflections.getTypesAnnotatedWith(annotation));
         }
         return beans;
+    }
+
+    public void doScan(Object... basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> beanClasses = getTypesAnnotatedWith(reflections, Controller.class, Service.class, Repository.class);
+        for (Class<?> clazz : beanClasses) {
+            beanDefinitionRegister.registerBeanDefinition(clazz, new BeanDefinition(clazz));
+        }
     }
 }

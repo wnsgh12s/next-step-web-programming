@@ -18,7 +18,9 @@ public class BeanFactoryTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void setup() {
-        beanFactory = new BeanFactory(new ClasspathBeanDefinitionScanner("core.di.factory.example").scan());
+        beanFactory = new BeanFactory();
+        ClasspathBeanDefinitionScanner scanner = new ClasspathBeanDefinitionScanner(beanFactory);
+        scanner.doScan("core.di.factory.example");
         beanFactory.initialize();
         beanFactory.getBean(JdbcQuestionRepository.class);
     }

@@ -13,17 +13,17 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BeanFactory {
+public class BeanFactory implements BeanDefinitionRegistry {
     private static final Logger logger = LoggerFactory.getLogger(BeanFactory.class);
 
     private Set<Class<?>> preInstanticateBeans;
 
     private Map<Class<?>, Object> beans = Maps.newHashMap();
+    private final Map<Class<?>, BeanDefinition> beanDefinitions = Maps.newHashMap();
 
     private List<Injector> injectors;
 
-    public BeanFactory(Set<Class<?>> preInstanticateBeans) {
-        this.preInstanticateBeans = preInstanticateBeans;
+    public BeanFactory() {
         this.injectors = List.of(
                 new ConstructorInjector(this),
                 new FieldInjector(this),
@@ -67,5 +67,10 @@ public class BeanFactory {
 
     public void registerBean(Class<?> clazz, Object instance) {
         beans.put(clazz, instance);
+    }
+
+    @Override
+    public void registerBeanDefinition(Class<?> clazz, BeanDefinition beanDefinition) {
+        beanDefinitions.put(clazz, beanDefinition);
     }
 }
