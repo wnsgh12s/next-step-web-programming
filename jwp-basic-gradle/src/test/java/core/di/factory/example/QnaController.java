@@ -10,6 +10,7 @@ import next.mvc.ModelAndView;
 
 @Controller
 public class QnaController extends AbstractNewController {
+
     private MyQnaService qnaService;
 
     @Inject
