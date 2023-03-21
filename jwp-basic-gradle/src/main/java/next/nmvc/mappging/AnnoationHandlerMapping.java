@@ -4,8 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import core.annotation.RequestMapping;
 import core.annotation.RequestMethod;
-import core.di.factory.BeanFactory;
-import core.di.factory.ClasspathBeanDefinitionScanner;
+import core.di.factory.inject.ApplicationContext;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -34,15 +33,10 @@ public class AnnoationHandlerMapping implements HandlerMapping {
 
 
     public void initialize() {
-        //컨트롤러 클래스 탐색
-        BeanFactory beanFactory = new BeanFactory();
-        ClasspathBeanDefinitionScanner scanner = new ClasspathBeanDefinitionScanner(beanFactory);
-        scanner.doScan(basePackage);
-        beanFactory.initialize();
-        Map<Class<?>, Object> controllers = beanFactory.getControllers();
+        ApplicationContext applicationContext = new ApplicationContext(basePackage);
+        Map<Class<?>, Object> controllers = applicationContext.getControllers();
         Set<Method> methods = getRequestMappingMethods(controllers.keySet());
         for (Method method : methods) {
-            System.out.println(method);
             RequestMapping rm = method.getAnnotation(RequestMapping.class);
             handlerExecutions.put(createHandlerKey(rm),
                     new HandlerExecution(controllers.get(method.getDeclaringClass()), method));
