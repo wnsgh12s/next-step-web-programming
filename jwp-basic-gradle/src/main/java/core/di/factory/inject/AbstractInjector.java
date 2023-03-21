@@ -37,7 +37,7 @@ public abstract class AbstractInjector implements Injector {
     abstract Set<?> getInjectedBeans(Class<?> clazz);
 
     private Object instantiateClass(Class<?> clazz) {
-        Class<?> concreateClazz = BeanFactoryUtils.findConcreteClass(clazz, beanFactory.getPreInstanticateBeans());
+        Class<?> concreateClazz = BeanFactoryUtils.findConcreteClass(clazz, beanFactory.getBeanClasses());
         Object bean = beanFactory.getBean(concreateClazz);
         if (bean != null) {
             return bean;
@@ -56,7 +56,7 @@ public abstract class AbstractInjector implements Injector {
 
     private Object instantiateConstructor(Constructor<?> constructor) {
         Class<?>[] pTypes = constructor.getParameterTypes();
-        Set<Class<?>> preInstanticateBeans = beanFactory.getPreInstanticateBeans();
+        Set<Class<?>> preInstanticateBeans = beanFactory.getBeanClasses();
         List<Object> args = Lists.newArrayList();
         for (Class<?> clazz : pTypes) {
             Class<?> concreteClass = BeanFactoryUtils.findConcreteClass(clazz, preInstanticateBeans);
