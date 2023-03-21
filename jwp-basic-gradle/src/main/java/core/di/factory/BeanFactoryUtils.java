@@ -6,8 +6,10 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 
 import com.google.common.collect.Sets;
 import core.annotation.Inject;
+import core.annotation.Order;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,25 +44,57 @@ public class BeanFactoryUtils {
             return injectedClazz;
         }
 
+        Set<Class<?>> classes = findConcreteClassesByInterface(injectedClazz, preInstanticateBeans);
+
+        if (classes.isEmpty()) {
+            throw new IllegalStateException(injectedClazz + "인터페이스를 구현하는 Bean이 존재하지 않는다.");
+        }
+
+        return getConcreateclass(classes);
+    }
+
+    private static Class<?> getConcreateclass(Set<Class<?>> classes) {
+        int count = 0;
+        Class<?> concreateclass = classes.iterator().next();
+        for (Class<?> haveInterfaceClass : classes) {
+            Order order = haveInterfaceClass.getAnnotation(Order.class);
+            if (order != null) {
+                if (order.value() > count) {
+                    count = order.value();
+                    concreateclass = haveInterfaceClass;
+                }
+            }
+        }
+        return concreateclass;
+    }
+
+    private static Set<Class<?>> findConcreteClassesByInterface(Class<?> injectedClazz,
+                                                                Set<Class<?>> preInstanticateBeans) {
+        Set<Class<?>> classes = new HashSet<>();
         for (Class<?> clazz : preInstanticateBeans) {
             Set<Class<?>> interfaces = Sets.newHashSet(clazz.getInterfaces());
             if (interfaces.contains(injectedClazz)) {
-                return clazz;
+                classes.add(clazz);
             }
         }
-
-        throw new IllegalStateException(injectedClazz + "인터페이스를 구현하는 Bean이 존재하지 않는다.");
+        return classes;
     }
 
     public static Set<Field> getInjectedFields(Class<?> clazz) {
         Set<Field> injectedFields = getAllFields(clazz, withAnnotation(Inject.class));
-        Set<Field> fields = new HashSet<>();
-        if(injectedFields.isEmpty()){
-            throw new IllegalArgumentException("Inject 필드가 존재하지 않습니다.");
+        //        while (injectedFields.iterator().hasNext()) {
+//            fields.add(injectedFields.iterator().next());
+//        }
+        return new HashSet<>(injectedFields);
+    }
+
+    static Set<Method> getInjectedMethod(Class<?> clazz) {
+        Set<Method> methods = new HashSet<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getAnnotation(Inject.class) != null) {
+                methods.add(method);
+            }
         }
-        while (injectedFields.iterator().hasNext()) {
-            fields.add(injectedFields.iterator().next());
-        }
-        return fields;
+        return methods;
     }
 }
