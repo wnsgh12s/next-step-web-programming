@@ -2,32 +2,30 @@ package core.di.factory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import core.di.factory.example.JdbcQuestionRepository;
 import core.di.factory.example.MyQnaService;
 import core.di.factory.example.MyUserController;
 import core.di.factory.example.MyUserService;
 import core.di.factory.example.QnaController;
+import core.di.factory.example.PriorityUserRepository;
+import core.di.factory.example.UserRepository;
+import core.di.factory.inject.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
 public class BeanFactoryTest {
     private Reflections reflections;
-    private BeanFactory beanFactory;
+    private ApplicationContext applicationContext;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void setup() {
-        beanFactory = new BeanFactory();
-        ClasspathBeanDefinitionScanner scanner = new ClasspathBeanDefinitionScanner(beanFactory);
-        scanner.doScan("core.di.factory.example");
-        beanFactory.initialize();
-        beanFactory.getBean(JdbcQuestionRepository.class);
+        applicationContext = new ApplicationContext("core.di.factory.example");
     }
 
     @Test
     public void di() throws Exception {
-        QnaController qnaController = beanFactory.getBean(QnaController.class);
+        QnaController qnaController = applicationContext.getBean(QnaController.class);
         assertNotNull(qnaController);
         assertNotNull(qnaController.getQnaService());
 
@@ -38,15 +36,21 @@ public class BeanFactoryTest {
 
     @Test
     public void fieldDi() throws Exception {
-        MyUserService myUserService = beanFactory.getBean(MyUserService.class);
+        MyUserService myUserService = applicationContext.getBean(MyUserService.class);
         assertNotNull(myUserService);
         assertNotNull(myUserService.getUserRepository());
     }
 
     @Test
     public void setterDi() throws Exception {
-        MyUserController myUserController = beanFactory.getBean(MyUserController.class);
+        MyUserController myUserController = applicationContext.getBean(MyUserController.class);
         assertNotNull(myUserController);
         assertNotNull(myUserController.getUserService());
+    }
+
+    @Test
+    public void InterfacePriorityDITest() throws Exception {
+        UserRepository Repository = applicationContext.getBean(PriorityUserRepository.class);
+        assertNotNull(Repository);
     }
 }
